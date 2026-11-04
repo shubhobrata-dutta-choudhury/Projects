@@ -1,0 +1,181 @@
+{
+  "total_specs": 3,
+  "pass_at_1_rate": 0.3333,
+  "pass_at_k_rate": 1.0,
+  "self_correction_recovery_rate": 1.0,
+  "average_attempts_to_pass": 1.67,
+  "average_llm_judge_score": 100.0,
+  "average_composite_score": 100.0,
+  "spec_reports": [
+    {
+      "spec_id": "spec_01_rate_limiter",
+      "title": "Token Bucket Rate Limiter",
+      "difficulty": "medium",
+      "final_status": "COMPLETED",
+      "deterministic": {
+        "spec_id": "spec_01_rate_limiter",
+        "passed_at_1": false,
+        "passed_at_k": true,
+        "total_attempts": 2,
+        "repairs_triggered": 1,
+        "total_tests_passed": 5,
+        "total_tests_failed": 0,
+        "test_pass_rate": 1.0,
+        "ast_valid": true,
+        "type_hint_coverage": 1.0,
+        "docstring_coverage": 1.0,
+        "total_duration_ms": 3927.93
+      },
+      "llm_judge": {
+        "spec_compliance": {
+          "dimension": "Spec & Constraint Compliance",
+          "chain_of_thought_critique": "Inspected `rate_limiter.py` against entry points ['class TokenBucketRateLimiter:', 'def __init__(self, capacity: float, refill_rate: float, initial_time: float = 0.0) -> None:', 'def allow_request(self, tokens: float = 1.0, now: float = 0.0) -> bool:', 'def available_tokens(self, now: float = 0.0) -> float:'] and allowed imports ['typing', 'dataclasses', 'math']. All acceptance tests passed=True with 0 forbidden AST constructs.",
+          "score": 5
+        },
+        "algorithmic_efficiency": {
+          "dimension": "Algorithmic Efficiency",
+          "chain_of_thought_critique": "Target complexity is `O(1) per allow_request and available_tokens call` time and `O(1) state storage per limiter instance` space. The implementation uses optimal data structures and avoids redundant allocations.",
+          "score": 5
+        },
+        "code_readability_and_typing": {
+          "dimension": "Code Readability & Typing",
+          "chain_of_thought_critique": "Static AST inspection measured 100% type-hint coverage and 100% docstring coverage across 3 public methods/functions.",
+          "score": 5
+        },
+        "test_suite_quality": {
+          "dimension": "Test Suite Quality",
+          "chain_of_thought_critique": "Agent-generated test suite (`test_agent_generated.py`) directly exercises boundary conditions, invalid input exceptions (`pytest.raises(ValueError)`), and state invariants.",
+          "score": 5
+        },
+        "executive_summary": "The synthesized module `rate_limiter.py` for 'Token Bucket Rate Limiter' achieved full convergence across all acceptance and edge-case tests with 100% type annotation coverage.",
+        "weighted_overall_score": 100.0
+      },
+      "state_transitions": [
+        "INGEST_SPEC -> GENERATE_CODE (Attempt #0: Ingested 'spec_01_rate_limiter' and compiled 3 acceptance tests.)",
+        "GENERATE_CODE -> STATIC_AST_CHECK (Attempt #1: Generated initial 'rate_limiter.py' and 'test_agent_generated.py' (Attempt #1).)",
+        "STATIC_AST_CHECK -> EXECUTE_SANDBOX_TESTS (Attempt #1: AST validation passed (Type hints: 100%, Docstrings: 100%).)",
+        "EXECUTE_SANDBOX_TESTS -> DIAGNOSE_AND_REPAIR (Attempt #1: Sandbox tests failed (1 failed, 4 passed) on Attempt #1.)",
+        "DIAGNOSE_AND_REPAIR -> STATIC_AST_CHECK (Attempt #2: Applied 1 repair patch(es) for Attempt #2.)",
+        "STATIC_AST_CHECK -> EXECUTE_SANDBOX_TESTS (Attempt #2: AST validation passed (Type hints: 100%, Docstrings: 100%).)",
+        "EXECUTE_SANDBOX_TESTS -> EVALUATE_QUALITY (Attempt #2: All 5 sandbox pytest tests passed on Attempt #2!)",
+        "EVALUATE_QUALITY -> COMPLETED (Attempt #2: Evaluation complete (LLM-as-a-Judge score: 100.0/100, Terminal status: COMPLETED).)"
+      ],
+      "repair_history_summaries": [
+        "Repair #1: [Root Cause] In `test_continuous_refill_and_cap`, `limiter.available_tokens(now=100.0)` returned 202.0 instead of 10.0 because `_refill()` added `elapsed * self.refill_rate` without clamping the accumulated tokens to `self.capacity`. | [Fix] Apply a surgical search-and-replace patch in `rate_limiter.py` to wrap the token update in `min(self.capacity, self._tokens + elapsed * self.refill_rate)`."
+      ],
+      "composite_score": 100.0
+    },
+    {
+      "spec_id": "spec_02_lru_cache_ttl",
+      "title": "LRU Cache with TTL Expiration",
+      "difficulty": "hard",
+      "final_status": "COMPLETED",
+      "deterministic": {
+        "spec_id": "spec_02_lru_cache_ttl",
+        "passed_at_1": false,
+        "passed_at_k": true,
+        "total_attempts": 2,
+        "repairs_triggered": 1,
+        "total_tests_passed": 5,
+        "total_tests_failed": 0,
+        "test_pass_rate": 1.0,
+        "ast_valid": true,
+        "type_hint_coverage": 1.0,
+        "docstring_coverage": 1.0,
+        "total_duration_ms": 4613.26
+      },
+      "llm_judge": {
+        "spec_compliance": {
+          "dimension": "Spec & Constraint Compliance",
+          "chain_of_thought_critique": "Inspected `lru_cache_ttl.py` against entry points ['class LRUCacheTTL:', 'def __init__(self, capacity: int, default_ttl: float = 60.0) -> None: ...', 'def get(self, key: str, now: float = 0.0) -> object | None: ...', 'def put(self, key: str, value: object, now: float = 0.0, ttl: float | None = None) -> None: ...', 'def size(self, now: float = 0.0) -> int: ...'] and allowed imports ['typing', 'collections', 'dataclasses']. All acceptance tests passed=True with 0 forbidden AST constructs.",
+          "score": 5
+        },
+		
+	  "algorithmic_efficiency": {
+			"dimension": "Algorithmic Efficiency",
+			"chain_of_thought_critique": "Target complexity is `O(1) amortized for get and put` time and `O(capacity) maximum active entries` space. The implementation uses optimal data structures and avoids redundant allocations.",
+			"score": 5
+		  },
+		  "code_readability_and_typing": {
+			"dimension": "Code Readability & Typing",
+			"chain_of_thought_critique": "Static AST inspection measured 100% type-hint coverage and 100% docstring coverage across 4 public methods/functions.",
+			"score": 5
+		  },
+		  "test_suite_quality": {
+			"dimension": "Test Suite Quality",
+			"chain_of_thought_critique": "Agent-generated test suite (`test_agent_generated.py`) directly exercises boundary conditions, invalid input exceptions (`pytest.raises(ValueError)`), and state invariants.",
+			"score": 5
+		  },
+		  "executive_summary": "The synthesized module `lru_cache_ttl.py` for 'LRU Cache with TTL Expiration' achieved full convergence across all acceptance and edge-case tests with 100% type annotation coverage.",
+		  "weighted_overall_score": 100.0
+		},
+		"state_transitions": [
+		  "INGEST_SPEC -> GENERATE_CODE (Attempt #0: Ingested 'spec_02_lru_cache_ttl' and compiled 3 acceptance tests.)",
+		  "GENERATE_CODE -> STATIC_AST_CHECK (Attempt #1: Generated initial 'lru_cache_ttl.py' and 'test_agent_generated.py' (Attempt #1).)",
+		  "STATIC_AST_CHECK -> EXECUTE_SANDBOX_TESTS (Attempt #1: AST validation passed (Type hints: 100%, Docstrings: 100%).)",
+		  "EXECUTE_SANDBOX_TESTS -> DIAGNOSE_AND_REPAIR (Attempt #1: Sandbox tests failed (1 failed, 4 passed) on Attempt #1.)",
+		  "DIAGNOSE_AND_REPAIR -> STATIC_AST_CHECK (Attempt #2: Applied 1 repair patch(es) for Attempt #2.)",
+		  "STATIC_AST_CHECK -> EXECUTE_SANDBOX_TESTS (Attempt #2: AST validation passed (Type hints: 100%, Docstrings: 100%).)",
+		  "EXECUTE_SANDBOX_TESTS -> EVALUATE_QUALITY (Attempt #2: ALL 5 sandbox pytest tests passed on Attempt #2!)",
+		  "EVALUATE_QUALITY -> COMPLETED (Attempt #2: Evaluation complete (LLM-as-a-Judge score: 100.0/100, Terminal status: COMPLETED).)"
+		],
+		"repair_history_summaries": [
+		  "Repair #1: [Root Cause] In `test_purge_expired_before_lru_eviction`, inserting `'new_key'` at `now=10.0` when `len(self._store) == capacity` immediately evicted `'long_lived'` via `popitem(last=False)` before purging `'short_lived'` which had already expired at `t=6.0`. | [Fix] Patch `LRUCacheTTL.put` in `lru_cache_ttl.py` to invoke `self._purge_expired(now)` before checking `if len(self._store) >= self.capacity:`."
+		],
+		"composite_score": 100.0
+	  },
+	  {
+		"spec_id": "spec_03_interval_merger",
+		"title": "Weighted Time Interval Merger & Gap Analyzer",
+		"difficulty": "easy",
+		"final_status": "COMPLETED",
+		"deterministic": {
+		  "spec_id": "spec_03_interval_merger",
+		  "passed_at_1": true,
+		  "passed_at_k": true,
+		  "total_attempts": 1,
+		  "repairs_triggered": 0,
+		  "total_tests_passed": 4,
+		  "total_tests_failed": 0,
+		  "test_pass_rate": 1.0,
+		  "ast_valid": true,
+		  "type_hint_coverage": 1.0,
+		  "docstring_coverage": 1.0,
+		  "total_duration_ms": 2104.29
+		},
+		"llm_judge": {
+		  "spec_compliance": {
+			"dimension": "Spec & Constraint Compliance",
+			"chain_of_thought_critique": "Inspected `interval_merger.py` against entry points ['def merge_intervals(intervals: list[tuple[int, int]]) -> list[tuple[int, int]]:', 'def total_covered_duration(intervals: list[tuple[int, int]]) -> int:'] and allowed imports ['typing', 'dataclasses']. All acceptance tests passed=True with 0 forbidden AST constructs.",
+			"score": 5
+		  },
+		  "algorithmic_efficiency": {
+			"dimension": "Algorithmic Efficiency",
+			"chain_of_thought_critique": "Target complexity is `O(N log N) due to sorting where N is number of intervals` time and `O(N) to store the merged output` space. The implementation uses optimal data structures and avoids redundant allocations.",
+			"score": 5
+		  },
+		  "code_readability_and_typing": {
+			"dimension": "Code Readability & Typing",
+			"chain_of_thought_critique": "Static AST inspection measured 100% type-hint coverage and 100% docstring coverage across 2 public methods/functions.",
+			"score": 5
+		  },
+		  "test_suite_quality": {
+			"dimension": "Test Suite Quality",
+			"chain_of_thought_critique": "Agent-generated test suite (`test_agent_generated.py`) directly exercises boundary conditions, invalid input exceptions (`pytest.raises(ValueError)`), and state invariants.",
+			"score": 5
+		  },
+		  "executive_summary": "The synthesized module `interval_merger.py` for 'Weighted Time Interval Merger & Gap Analyzer' achieved full convergence across all acceptance and edge-case tests with 100% type annotation coverage.",
+		  "weighted_overall_score": 100.0
+		},
+		"state_transitions": [
+		  "INGEST_SPEC -> GENERATE_CODE (Attempt #0: Ingested 'spec_03_interval_merger' and compiled 3 acceptance tests.)",
+		  "GENERATE_CODE -> STATIC_AST_CHECK (Attempt #1: Generated initial 'interval_merger.py' and 'test_agent_generated.py' (Attempt #1).)",
+		  "STATIC_AST_CHECK -> EXECUTE_SANDBOX_TESTS (Attempt #1: AST validation passed (Type hints: 100%, Docstrings: 100%).)",
+		  "EXECUTE_SANDBOX_TESTS -> EVALUATE_QUALITY (Attempt #1: ALL 4 sandbox pytest tests passed on Attempt #1!)",
+		  "EVALUATE_QUALITY -> COMPLETED (Attempt #1: Evaluation complete (LLM-as-a-Judge score: 100.0/100, Terminal status: COMPLETED).)"
+		],
+		"repair_history_summaries": [],
+		"composite_score": 100.0
+	  }
+	 ]
+	}

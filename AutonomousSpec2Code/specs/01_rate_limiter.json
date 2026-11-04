@@ -1,0 +1,44 @@
+{
+  "spec_id": "spec_01_rate_limiter",
+  "title": "Token Bucket Rate Limiter",
+  "difficulty": "medium",
+  "description": "Implement a deterministic Token Bucket Rate Limiter class `TokenBucketRateLimiter` that controls request throughput using an explicit `now: float` timestamp parameter (in seconds). The bucket starts full at `capacity` tokens and refills continuously at `refill_rate` tokens per second up to `capacity`.",
+  "target_filename": "rate_limiter.py",
+  "entry_points": [
+    "class TokenBucketRateLimiter:",
+    "def __init__(self, capacity: float, refill_rate: float, initial_time: float = 0.0) -> None:",
+    "def allow_request(self, tokens: float = 1.0, now: float = 0.0) -> bool:",
+    "def available_tokens(self, now: float = 0.0) -> float:"
+  ],
+  "edge_cases": [
+    "Raise ValueError if capacity <= 0 or refill_rate <= 0 in __init__",
+    "Raise ValueError if tokens <= 0 in allow_request",
+    "Clamp available tokens so they never exceed capacity even after long idle periods",
+    "If `now` is earlier than the last recorded timestamp, do not subtract tokens (treat elapsed time as 0.0)"
+  ],
+  "constraints": {
+    "time_complexity": "O(1) per allow_request and available_tokens call",
+    "space_complexity": "O(1) state storage per limiter instance",
+    "allowed_imports": ["typing", "dataclasses", "math"],
+    "forbidden_constructs": ["eval", "exec", "os.system", "subprocess", "open"],
+    "require_type_hints": true,
+    "require_docstrings": true
+  },
+  "acceptance_tests": [
+    {
+      "test_id": "test_initial_capacity_and_consumption",
+      "description": "Bucket starts full and consumes tokens accurately without refill at same timestamp.",
+      "test_code": "def test_initial_capacity_and_consumption():\n    limiter = TokenBucketRateLimiter(capacity=5.0, refill_rate=1.0, initial_time=10.0)\n    assert math.isclose(limiter.available_tokens(now=10.0), 5.0)\n    assert limiter.allow_request(tokens=3.0, now=10.0) is True\n    assert math.isclose(limiter.available_tokens(now=10.0), 2.0)\n    assert limiter.allow_request(tokens=3.0, now=10.0) is False\n    assert math.isclose(limiter.available_tokens(now=10.0), 2.0)"
+    },
+    {
+      "test_id": "test_continuous_refill_and_cap",
+      "description": "Bucket refills proportionally to elapsed time and caps at capacity.",
+      "test_code": "def test_continuous_refill_and_cap():\n    limiter = TokenBucketRateLimiter(capacity=10.0, refill_rate=2.0, initial_time=0.0)\n    assert limiter.allow_request(tokens=8.0, now=0.0) is True\n    assert math.isclose(limiter.available_tokens(now=2.5), 7.0)\n    assert math.isclose(limiter.available_tokens(now=100.0), 10.0)\n    assert limiter.allow_request(tokens=10.0, now=100.0) is True"
+    },
+    {
+      "test_id": "test_invalid_parameters_raise_value_error",
+      "description": "Invalid capacity, refill_rate, or requested token count must raise ValueError.",
+      "test_code": "def test_invalid_parameters_raise_value_error():\n    with pytest.raises(ValueError):\n        TokenBucketRateLimiter(capacity=0.0, refill_rate=1.0)\n    with pytest.raises(ValueError):\n        TokenBucketRateLimiter(capacity=5.0, refill_rate=-2.0)\n    limiter = TokenBucketRateLimiter(capacity=5.0, refill_rate=1.0)\n    with pytest.raises(ValueError):\n        limiter.allow_request(tokens=0.0, now=1.0)"
+    }
+  ]
+}
