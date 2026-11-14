@@ -1,0 +1,55 @@
+﻿version: "3.9"
+
+services:
+  redis-stack:
+    image: redis/redis-stack:7.2.0-v13
+    container_name: finflow-redis
+    ports:
+      - "6379:6379"
+      - "8001:8001" # RedisInsight UI at http://localhost:8001
+    environment:
+      - REDIS_ARGS=--appendonly yes --save 60 1000
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  langfuse-postgres:
+    image: postgres:16-alpine
+    container_name: finflow-langfuse-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=langfuse
+    ports:
+      - "5432:5432"
+    volumes:
+      - langfuse_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  langfuse-server:
+    image: langfuse/langfuse:2
+    container_name: finflow-langfuse
+    depends_on:
+      langfuse-postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000" # Langfuse UI & API at http://localhost:3000
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@langfuse-postgres:5432/langfuse
+      - NEXTAUTH_SECRET=finflow-local-dev-secret-key-change-in-prod
+      - SALT=finflow-local-dev-salt-change-in-prod
+      - NEXTAUTH_URL=http://localhost:3000
+      - TELEMETRY_ENABLED=false
+      - LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES=true
+
+volumes:
+  redis_data:
+  langfuse_pg_data:
